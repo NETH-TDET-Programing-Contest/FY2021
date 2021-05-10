@@ -19,7 +19,7 @@ set TEAM_AGENT="%DIR_ROOT%\src\human_agent.py"
 set CHECKPOINT_ENDPOINT="%LEADERBOARD_ROOT%\results.json"
 set CHALLENGE_TRACK_CODENAME=SENSORS
 
-.\venv\Scripts\python.exe ".\leaderboard\leaderboard\leaderboard_evaluator.py" ^
+.\venv\Scripts\python.exe "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
 --scenarios=%SCENARIOS% ^
 --routes=%ROUTES% ^
 --repetitions=%REPETITIONS% ^
