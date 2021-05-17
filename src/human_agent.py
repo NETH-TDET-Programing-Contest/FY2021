@@ -113,6 +113,7 @@ class HumanAgent(AutonomousAgent):
             {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0,
              'width': 800, 'height': 600, 'fov': 100, 'id': 'Center'},
             {'type': 'sensor.speedometer', 'reading_frequency': 20, 'id': 'speed'},
+            {'type': 'sensor.other.gnss', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'id': 'GPS'},
         ]
 
         return sensors
@@ -123,6 +124,8 @@ class HumanAgent(AutonomousAgent):
         """
         self.agent_engaged = True
         self._hic.run_interface(input_data)
+        #print(self._global_plan)
+        #print(input_data['GPS'])
 
         control = self._controller.parse_events(timestamp - self._prev_timestamp)
         self._prev_timestamp = timestamp
