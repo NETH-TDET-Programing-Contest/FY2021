@@ -84,45 +84,23 @@ class HumanAgent(AutonomousAgent):
         """
         Setup the agent parameters
         """
-        self.track = Track.SENSORS
 
         self.agent_engaged = False
         self._hic = HumanInterface()
         self._controller = KeyboardControl(path_to_conf_file)
         self._prev_timestamp = 0
 
-    def sensors(self):
-        """
-        Define the sensor suite required by the agent
 
-        :return: a list containing the required sensors in the following format:
+    # Sensor
+    # {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'width': 800, 'height': 600, 'fov': 100, 'id': 'CAMERA'}
+    # {'type': 'sensor.lidar.ray_cast', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': -45.0, 'id': 'LIDAR'}
+    # {'type': 'sensor.other.radar', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': -45.0, 'fov': 30, 'id': 'RADAR'}
+    # {'type': 'sensor.other.gnss', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'id': 'GPS'}
+    # {'type': 'sensor.other.imu', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': -45.0, 'id': 'IMU'}
+    # {'type': 'sensor.speedometer', 'reading_frequency': 20, 'id': 'SPEED'}
 
-        [
-            {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0,
-                      'width': 300, 'height': 200, 'fov': 100, 'id': 'Left'},
-
-            {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0,
-                      'width': 300, 'height': 200, 'fov': 100, 'id': 'Right'},
-
-            {'type': 'sensor.lidar.ray_cast', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'yaw': 0.0, 'pitch': 0.0, 'roll': 0.0,
-             'id': 'LIDAR'}
-        ]
-        """
-
-        sensors = [
-            {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0,
-             'width': 800, 'height': 600, 'fov': 100, 'id': 'CAMERA'},
-            {'type': 'sensor.lidar.ray_cast', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0,
-             'yaw': -45.0, 'id': 'LIDAR'},
-            {'type': 'sensor.other.radar', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0,
-             'yaw': -45.0, 'fov': 30, 'id': 'RADAR'},
-            {'type': 'sensor.other.gnss', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'id': 'GPS'},
-            {'type': 'sensor.other.imu', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0,
-             'yaw': -45.0, 'id': 'IMU'},
-            {'type': 'sensor.speedometer', 'reading_frequency': 20, 'id': 'SPEED'},
-        ]
-
-        return sensors
+    #Global waypoints
+    # self._global_plan
 
     def run_step(self, input_data, timestamp):
         """
@@ -130,8 +108,6 @@ class HumanAgent(AutonomousAgent):
         """
         self.agent_engaged = True
         self._hic.run_interface(input_data)
-        #print(self._global_plan)
-        #print(input_data['GPS'])
 
         control = self._controller.parse_events(timestamp - self._prev_timestamp)
         self._prev_timestamp = timestamp
