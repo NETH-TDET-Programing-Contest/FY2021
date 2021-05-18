@@ -13,9 +13,9 @@ set PYTHONPATH=%SCENARIO_RUNNER_ROOT%;%PYTHONPATH%
 set PYTHONPATH=%LEADERBOARD_ROOT%;%PYTHONPATH%
 
 .\venv\Scripts\python.exe "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
---routes="%TRACKS_ROOT%\Town03.xml" ^
---scenarios="%TRACKS_ROOT%\Town03.json" ^
---agent="%DIR_ROOT%\src\human_agent.py" ^
+--routes="%TRACKS_ROOT%\track_01.xml" ^
+--scenarios="%TRACKS_ROOT%\track_01.json" ^
+--agent="%DIR_ROOT%\src\dummy_agent.py" ^
 --agent-config="" ^
 --debug=1
 
