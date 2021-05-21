@@ -12,7 +12,9 @@ set PYTHONPATH=%CARLA_ROOT%\dist\carla-0.9.11-py3.7-win-amd64.egg;%PYTHONPATH%
 set PYTHONPATH=%SCENARIO_RUNNER_ROOT%;%PYTHONPATH%
 set PYTHONPATH=%LEADERBOARD_ROOT%;%PYTHONPATH%
 
-.\venv\Scripts\python.exe "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
+set PYTHON=%DIR_ROOT%\venv\Scripts\python.exe
+
+PYTHON "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
 --routes="%TRACKS_ROOT%\track_01.xml" ^
 --scenarios="%TRACKS_ROOT%\track_01.json" ^
 --agent="%DIR_ROOT%\src\dummy_agent.py" ^
