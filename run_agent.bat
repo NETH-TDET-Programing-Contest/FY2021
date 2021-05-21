@@ -17,7 +17,7 @@ set PYTHON=%DIR_ROOT%\venv\Scripts\python.exe
 PYTHON "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
 --routes="%TRACKS_ROOT%\track_01.xml" ^
 --scenarios="%TRACKS_ROOT%\track_01.json" ^
---agent="%DIR_ROOT%\src\dummy_agent.py" ^
+--agent="%DIR_ROOT%\src\human_agent.py" ^
 --agent-config="" ^
 --debug=1
 
