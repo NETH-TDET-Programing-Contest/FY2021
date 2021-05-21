@@ -11,8 +11,12 @@
 `python -m pip install -r requirements.txt`
 
 # How to run agent
-1. Run CARLA server by execute `run_carla.bat`
-2. Run agent by execute `run_agent.bat`
+1. Run CARLA server by execute `start_carla_world.bat`
+2. Open Terminal (PowerShell or Command Prompt) and activate python virtual environment by using  
+`./venv/Scripts/activate`  
+`(venv)` will appear at the beginning of your Terminal like this  
+`(venv) PS C:\Users\supav\Desktop\FY2021>`
+3. Run agent by execute `./run_agent.bat`
 
 # How to config run_agent scripts
 run_agent.bat scripts
