@@ -73,11 +73,11 @@ class AutonomousAgent(object):
 
         """
         sensors = [
-            {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'width': 800, 'height': 600, 'fov': 100, 'id': 'CAMERA'},
-            {'type': 'sensor.lidar.ray_cast', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'id': 'LIDAR'},
-            {'type': 'sensor.other.radar', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'fov': 30, 'id': 'RADAR'},
-            {'type': 'sensor.other.gnss', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'id': 'GPS'},
-            {'type': 'sensor.other.imu', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'id': 'IMU'},
+            {'type': 'sensor.camera.rgb', 'x': 0.45, 'y': 0.0, 'z': 2.15, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'width': 800, 'height': 600, 'fov': 100, 'id': 'CAMERA'},
+            {'type': 'sensor.lidar.ray_cast', 'x': 0.45, 'y': 0.0, 'z': 2.15, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'id': 'LIDAR'},
+            {'type': 'sensor.other.radar', 'x': 0.45, 'y': 0.0, 'z': 2.15, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'fov': 30, 'id': 'RADAR'},
+            {'type': 'sensor.other.gnss', 'x': 0.45, 'y': 0.0, 'z': 2.15, 'id': 'GPS'},
+            {'type': 'sensor.other.imu', 'x': 0.45, 'y': 0.0, 'z': 2.15, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0, 'id': 'IMU'},
             {'type': 'sensor.speedometer', 'reading_frequency': 20, 'id': 'SPEED'},
         ]
 
