@@ -62,8 +62,7 @@ class Display():
 # ============================= Waypoint Following =========================
 class WaypointFollowing():
     def __init__(self):
-        self._current_waypoint = None
-        self._next_waypoint = None
+        self._waypoint_index = 0
 
     def __phrase_waypoint(self, waypoint):
         lat = waypoint[0]['lat']
@@ -84,51 +83,112 @@ class WaypointFollowing():
         heading = math.degrees(math.atan2(diff_lon, diff_lat))
 
         if (heading < 0.0):
-            heading+=360.0
+            heading += 360.0
 
         return heading
+
+    def __heading_diff(self, angle1, angle2):
+        angle_diff = angle1 - angle2
+        if(angle_diff > 180.0):
+            angle_diff -= 360.0
+        elif(angle_diff < -180.0):
+            angle_diff += 360.0
+        
+        return angle_diff
+
+    # https://www.kite.com/python/answers/how-to-find-the-distance-between-two-lat-long-coordinates-in-python
+    def __get_distance(self, lat1, lon1, lat2, lon2):
+        # approximate radius of earth in km
+        EARTH_RADIUS = 6373.0
+
+        lat1 = math.radians(lat1)
+        lon1 = math.radians(lon1)
+        lat2 = math.radians(lat2)
+        lon2 = math.radians(lon2)
+
+        diff_lat = lat2 - lat1
+        diff_lon = lon2 - lon1
+
+        a = math.sin(diff_lat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(diff_lon / 2)**2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        distance = EARTH_RADIUS * c * 1000 # km to m
+
+        return distance
 
     
     # Pick 2 pair of waypoints base on current location
     def __pick_waypoint(self, input_data, _global_plan):
+        current_waypoint  = _global_plan[self._waypoint_index]
+        next_waypoint     = _global_plan[self._waypoint_index+4]
 
-        if (_global_plan != None):
+        next_wp = self.__phrase_waypoint(next_waypoint)
+        [gps_frame, [gps_lat, gps_lon, gps_z]] = input_data['GPS']
 
-            # First time waypoint assignment
-            if (self._current_waypoint == None) and (self._next_waypoint == None):
-                self._current_waypoint  = _global_plan[0]
-                self._next_waypoint     = _global_plan[1]
+        distance = self.__get_distance(next_wp['lat'], next_wp['lon'], gps_lat, gps_lon)
+        if (distance < 0.5):
+            self._waypoint_index += 1
 
-            # Normal operation
-            else:
-                print(f"heading: {self.__get_heading(self._current_waypoint, self._next_waypoint)}")
+        return current_waypoint, next_waypoint
+        
+            
+    def __steering(self, input_data, current_waypoint, next_waypoint):
 
-                #[frame, [lat, lon, z]] = input_data['GPS']
+        wp_heading = self.__get_heading(current_waypoint, next_waypoint)
 
-                [lat, lon, z] = _global_plan[0][0].values()
-                # lat = _global_plan[0][0]['lat']
-                # lon = _global_plan[0][0]['lon']
-                # z = _global_plan[0][0]['z']
-                RoadOption = _global_plan[0][1]
+        [frame, [ax, ay, az, gx, gy, gz, compass]] = input_data['IMU']
+        car_heading = math.degrees(compass)
 
-                #print(f"{lat}, {lon}, {z}, {RoadOption}")
+        diff_heading = self.__heading_diff(car_heading, wp_heading)
 
-                #print(input_data['GPS'])
-                #print(f"Current WP = {self._current_waypoint}")
+        print(f"heading= ({wp_heading}, {car_heading}, {diff_heading})")
 
-                #print(input_data['IMU'])
+        if (-1.0 < diff_heading < 1.0):
+            steering = 0.0
+        elif (diff_heading < -1.0):
+            steering = 0.5
+        elif (diff_heading > 1.0):
+            steering = -0.5
+        else:
+            steering = 0.0
 
-                [frame, [ax, ay, az, gx, gy, gz, compass]] = input_data['IMU']
-                print(f"compass={math.degrees(compass)}")
+        return steering
 
-                # print(frame, ax, ay, az, gx, gy, gz, compass)
+
+    def __throttling(self, input_data):
+        target_speed = 2 #m/s = 18 km/hr
+        car_speed = input_data['SPEED'][1]['speed']
+
+        diff_speed = car_speed - target_speed
+
+        print(f"speed= ({target_speed}, {car_speed}, {diff_speed})")
+
+        if (-0.25 < diff_speed < 0.25):
+            throttle = 0.25
+            brake = 0.0
+        elif (diff_speed < -0.25):
+            throttle = 0.35
+            brake = 0.0
+        elif (diff_speed > 0.25):
+            throttle = 0.0
+            brake = 0.25
+        else:
+            throttle = 0.0
+            brake = 1.0
+
+        return throttle, brake
 
 
     def execute(self, input_data, _global_plan):
         control = carla.VehicleControl()
-        self.__pick_waypoint(input_data, _global_plan)
+        if (_global_plan != None):
+            # Select relate waypoint
+            current_waypoint, next_waypoint = self.__pick_waypoint(input_data, _global_plan)
 
-        control.throttle = 0.25
+            # Calculate steering
+            control.steer = self.__steering(input_data, current_waypoint, next_waypoint)
+            control.throttle, control.brake = self.__throttling(input_data)
+
         return control
 
 # ============================== DemoAgent =================================
