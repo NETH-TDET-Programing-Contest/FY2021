@@ -17,6 +17,9 @@ from leaderboard.autoagents.autonomous_agent import AutonomousAgent, Track
 
 from enum import Enum, auto
 import math
+import numpy as np
+
+import open3d
 
 
 def get_entry_point():
@@ -58,6 +61,46 @@ class Display():
     def quit(self):
         pygame.quit()
 
+
+class Plot3D():
+    def __init__(self):
+        self.pcd = open3d.geometry.PointCloud()
+        self.vis = open3d.visualization.Visualizer()
+        self.vis.create_window(width=400, height=300)
+        self.vis.add_geometry(self.pcd)
+        self.opt = self.vis.get_render_option()
+        # self.opt.point_size = 1.0
+        self.opt.show_coordinate_frame = True
+        self.view = self.vis.get_view_control()
+
+        self.buffer_count = 0
+        self.lidar = np.zeros((1,4))
+        self.lidar_filter = True
+
+
+    def plot(self, input_data):
+        lidar = np.array(input_data['LIDAR'][1])
+
+        if (self.lidar_filter):
+            lidar = lidar[np.where((5 < lidar[:,0]) & (lidar[:,0] < 15)
+                                 & (-2 < lidar[:,1]) & (lidar[:,1] < 2)
+                                 & (-1 < lidar[:,2]) & (lidar[:,2] < 0))]
+
+        lidar[:,1] = -1*lidar[:,1] # Invert y-axis
+        self.lidar = np.append(self.lidar, lidar, axis=0)
+
+        if (self.buffer_count == 2):
+            self.pcd.points = open3d.utility.Vector3dVector(self.lidar[:, :3])
+            self.vis.clear_geometries()
+            self.vis.add_geometry(self.pcd)
+            #self.vis.update_geometry(self.pcd)
+            #self.vis.update_renderer()
+            self.vis.poll_events()
+
+            self.lidar = np.zeros((1,4))
+            self.buffer_count = 0
+        else:
+            self.buffer_count += 1
 
 # ============================= Waypoint Following =========================
 class WaypointFollowing():
@@ -141,7 +184,7 @@ class WaypointFollowing():
 
         diff_heading = self.__heading_diff(car_heading, wp_heading)
 
-        print(f"heading= ({wp_heading}, {car_heading}, {diff_heading})")
+        #print(f"heading= ({wp_heading}, {car_heading}, {diff_heading})")
 
         if (-1.0 < diff_heading < 1.0):
             steering = 0.0
@@ -156,12 +199,12 @@ class WaypointFollowing():
 
 
     def __throttling(self, input_data):
-        target_speed = 2 #m/s = 18 km/hr
+        target_speed = 2 #m/s = 7.2 km/hr
         car_speed = input_data['SPEED'][1]['speed']
 
         diff_speed = car_speed - target_speed
 
-        print(f"speed= ({target_speed}, {car_speed}, {diff_speed})")
+        #print(f"speed= ({target_speed}, {car_speed}, {diff_speed})")
 
         if (-0.25 < diff_speed < 0.25):
             throttle = 0.25
@@ -191,6 +234,31 @@ class WaypointFollowing():
 
         return control
 
+
+# ============================= Emergency Brake =============================
+class EmergencyBrake():
+    def __init__(self):
+        pass
+
+    def object_detection(self, input_data):
+        lidar = np.array(input_data['LIDAR'][1])
+
+        lidar = lidar[np.where((5 < lidar[:,0]) & (lidar[:,0] < 15)
+                        & (-2 < lidar[:,1]) & (lidar[:,1] < 2)
+                        & (-1 < lidar[:,2]) & (lidar[:,2] < 0))]
+
+        print(len(lidar))
+        if (len(lidar) >= 5):
+            print("============================= Emergency Brake =============================")
+            return True
+        else:
+            return False
+
+    def execute(self, input_data):
+        control = carla.VehicleControl()
+        control.brake = 1.0
+        return control
+
 # ============================== DemoAgent =================================
 
 class DemoAgent(AutonomousAgent):
@@ -198,10 +266,6 @@ class DemoAgent(AutonomousAgent):
     """
     Demo autonomous agent to control the ego vehicle
     """
-    
-    class State(Enum):
-        waypoint_following = auto()
-        emergency_break = auto()
 
     def setup(self, path_to_conf_file):
         """
@@ -209,8 +273,9 @@ class DemoAgent(AutonomousAgent):
         """
         
         self.display = Display()
-        self.state = self.State.waypoint_following
+        self.plot3d = Plot3D()
         self.waypoint_following = WaypointFollowing()
+        self.emergency_brake = EmergencyBrake()
 
 
     # =================================================================
@@ -264,25 +329,16 @@ class DemoAgent(AutonomousAgent):
         # Example: lidar_data = input_data['LIDAR'][1]
 
         self.display.render(input_data)
+        self.plot3d.plot(input_data)
 
         # DO SOMETHING SMART
 
-        # Simple statemachine with 2 states
         # Switch state
-        if (self.state == self.State.waypoint_following):
-            self.state = self.State.waypoint_following
-        elif(self.state == self.State.emergency_break):
-            self.state = self.State.emergency_break
+        if (self.emergency_brake.object_detection(input_data)):
+            control = self.emergency_brake.execute(input_data)
         else:
-            print("State not change")
-
-        # Execute state
-        if (self.state == self.State.waypoint_following):
             control = self.waypoint_following.execute(input_data, self._global_plan)
-        elif(self.state == self.State.emergency_break):
-            pass
-        else:
-            pass
+
 
         # RETURN CONTROL
         # control = carla.VehicleControl()
