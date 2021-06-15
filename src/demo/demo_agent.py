@@ -247,7 +247,7 @@ class EmergencyBrake():
                         & (-2 < lidar[:,1]) & (lidar[:,1] < 2)
                         & (-1 < lidar[:,2]) & (lidar[:,2] < 0))]
 
-        print(len(lidar))
+        # print(len(lidar))
         if (len(lidar) >= 5):
             print("============================= Emergency Brake =============================")
             return True
