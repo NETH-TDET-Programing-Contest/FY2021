@@ -36,6 +36,7 @@ from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirect
 from srunner.scenarios.junction_crossing_route import SignalJunctionCrossingRoute, NoSignalJunctionCrossingRoute
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.maneuver_opposite_direction_vehicle_block import ManeuverOppositeDirectionVehicleBlock
+from srunner.scenarios.emergency_crossing import EmergencyCrossing
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -64,7 +65,8 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario8": SignalJunctionCrossingRoute,
     "Scenario9": SignalJunctionCrossingRoute,
     "Scenario10": NoSignalJunctionCrossingRoute,
-    "Scenario11": ManeuverOppositeDirectionVehicleBlock
+    "Scenario11": ManeuverOppositeDirectionVehicleBlock,
+    "Scenario12": EmergencyCrossing
 }
 
 
