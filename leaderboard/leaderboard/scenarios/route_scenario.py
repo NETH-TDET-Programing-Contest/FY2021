@@ -64,7 +64,7 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario8": SignalJunctionCrossingRoute,
     "Scenario9": SignalJunctionCrossingRoute,
     "Scenario10": NoSignalJunctionCrossingRoute,
-    "Scenario11": ManeuverOppositeDirectionVehicleBlock,
+    "Scenario11": ManeuverOppositeDirectionVehicleBlock
 }
 
 
