@@ -1,5 +1,8 @@
 # FY2021 NETH CARLA Challenge
 
+# CARLA Overnight Build 0.9.11 Download Link
+http://carla-releases.s3.amazonaws.com/Linux/Dev/CARLA_Latest.tar.gz
+
 # How to initial setup
 1. Create python virtual environment by using Terminal (PowerShell or Command Prompt) at root of this folder  
 `python -m venv ./venv`
