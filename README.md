@@ -3,6 +3,7 @@
 # CARLA Overnight Build 0.9.11 Download Link
 https://carla-releases.s3.eu-west-3.amazonaws.com/Windows/CARLA_0.9.11.zip
 
+
 # How to initial setup
 1. Create python virtual environment by using Terminal (PowerShell or Command Prompt) at root of this folder  
 `python -m venv ./venv`
