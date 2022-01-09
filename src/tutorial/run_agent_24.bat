@@ -20,7 +20,7 @@ call activate
 PYTHON "%LEADERBOARD_ROOT%\leaderboard\leaderboard_evaluator.py" ^
 --routes="%TRACKS_ROOT%\track_01.xml" ^
 --scenarios="%TRACKS_ROOT%\track_01.json" ^
---agent="%DIR_ROOT%\src\workshop\agent_24.py" ^
+--agent="%DIR_ROOT%\src\tutorial\agent_24.py" ^
 --agent-config="" ^
 --debug=1
 
