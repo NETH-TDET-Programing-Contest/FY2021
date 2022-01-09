@@ -1,3 +1,7 @@
+cd venv/Scripts
+call activate
+cd ../..
+
 @echo off
 title Exeute agent
 
